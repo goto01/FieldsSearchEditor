@@ -1,0 +1,8 @@
+{
+  "name": "com.kiryltkachou.fieldssearcheditor",
+  "version": "1.0.0",
+  "displayName": "Fields Search Editor",
+  "description": "The tool for a serialized fields search in an editors.",
+  "documentationUrl": "https://github.com/goto01/FieldsSearchEditor",
+  "type": "tool"
+}
