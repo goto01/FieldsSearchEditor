@@ -1,5 +1,5 @@
 # FieldsSearchEditor
-Unity editor with a fields search. Installing through the package manager.
+Unity editor with a fields search. Installation via the package manager.
 
 ```
 [CustomEditor(typeof(SimpleComponent))]
