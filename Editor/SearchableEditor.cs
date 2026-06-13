@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Editors
+namespace FieldsSearchEditor
 {
     public class SearchableEditor : UnityEditor.Editor
     {
-        private const string GameSettingsEditorSearchFilter = "GameSettingsEditorSearchFilter";
-        
+        private const string SearchFilterPrefsKey = "FieldsSearchEditor_SearchFilter";
+
         private GUIStyle _searchTextFieldStyle;
         private GUIStyle _clearSearchButtonStyle;
         private string _searchFilter;
@@ -18,13 +18,13 @@ namespace Editor.Editors
         {
             get
             {
-                if (_searchFilter == null) _searchFilter = EditorPrefs.GetString(GameSettingsEditorSearchFilter, string.Empty);
+                if (_searchFilter == null) _searchFilter = EditorPrefs.GetString(SearchFilterPrefsKey, string.Empty);
                 return _searchFilter;
             }
             set
             {
                 if (_searchFilter == value) return;
-                EditorPrefs.SetString(GameSettingsEditorSearchFilter, _searchFilter = value.ToUpper());
+                EditorPrefs.SetString(SearchFilterPrefsKey, _searchFilter = value.ToUpper());
                 RefreshFilteredProperties();
             }
         }
@@ -40,11 +40,16 @@ namespace Editor.Editors
             if (string.IsNullOrEmpty(SearchFilter) && _filteredProperties.Count == 0) RefreshFilteredProperties();
             if (_searchTextFieldStyle == null)
             {
-                _searchTextFieldStyle = GUI.skin.FindStyle("ToolbarSeachTextField");
-                _clearSearchButtonStyle = GUI.skin.FindStyle("ToolbarSeachCancelButton");
+#if UNITY_6000_0_OR_NEWER
+                _searchTextFieldStyle = GUI.skin.FindStyle("ToolbarSearchTextField") ?? GUI.skin.textField;
+                _clearSearchButtonStyle = GUI.skin.FindStyle("ToolbarSearchCancelButton") ?? GUI.skin.button;
+#else
+                _searchTextFieldStyle = GUI.skin.FindStyle("ToolbarSeachTextField") ?? GUI.skin.textField;
+                _clearSearchButtonStyle = GUI.skin.FindStyle("ToolbarSeachCancelButton") ?? GUI.skin.button;
+#endif
             }
         }
-        
+
         public override void OnInspectorGUI()
         {
             TryToInitialize();
@@ -72,7 +77,7 @@ namespace Editor.Editors
                     EditorGUILayout.PropertyField(iterator, true);
             }
         }
-        
+
         private void RefreshFilteredProperties()
         {
             if (_filteredProperties == null) _filteredProperties = new List<string>();
@@ -80,7 +85,8 @@ namespace Editor.Editors
             var iterator = serializedObject.GetIterator();
             iterator.Next(true);
             while (iterator.NextVisible(false))
-                if (iterator.displayName.IndexOf(SearchFilter, StringComparison.OrdinalIgnoreCase) >= 0) _filteredProperties.Add(iterator.name);
+                if (iterator.displayName.IndexOf(SearchFilter, StringComparison.OrdinalIgnoreCase) >= 0)
+                    _filteredProperties.Add(iterator.name);
         }
     }
 }
