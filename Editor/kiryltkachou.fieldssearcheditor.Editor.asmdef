@@ -1,3 +1,6 @@
 {
-	"name": "kiryltkachou.fieldssearcheditor.Editor"
+	"name": "kiryltkachou.fieldssearcheditor.Editor",
+	"includePlatforms": [
+		"Editor"
+	]
 }
