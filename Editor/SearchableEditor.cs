@@ -11,8 +11,11 @@ namespace FieldsSearchEditor
 
         private GUIStyle _searchTextFieldStyle;
         private GUIStyle _clearSearchButtonStyle;
+        private GUIStyle _hiddenCountLabelStyle;
+        private Texture2D _hiddenCountBackground;
         private string _searchFilter;
         private List<string> _filteredProperties;
+        private int _totalPropertyCount;
 
         public string SearchFilter
         {
@@ -48,6 +51,21 @@ namespace FieldsSearchEditor
                 _clearSearchButtonStyle = GUI.skin.FindStyle("ToolbarSeachCancelButton") ?? GUI.skin.button;
 #endif
             }
+            if (_hiddenCountLabelStyle == null)
+            {
+                _hiddenCountBackground = new Texture2D(1, 1);
+                _hiddenCountBackground.SetPixel(0, 0, new Color(0.25f, 0.6f, 0.9f, 0.85f));
+                _hiddenCountBackground.Apply();
+                _hiddenCountLabelStyle = new GUIStyle(GUI.skin.label)
+                {
+                    normal = { background = _hiddenCountBackground, textColor = Color.white },
+                    padding = new RectOffset(8, 8, 3, 3),
+                    margin = new RectOffset(0, 0, 2, 2),
+                    fontSize = 10,
+                    fontStyle = FontStyle.Bold,
+                    alignment = TextAnchor.MiddleCenter,
+                };
+            }
         }
 
         public override void OnInspectorGUI()
@@ -65,6 +83,20 @@ namespace FieldsSearchEditor
             SearchFilter = EditorGUILayout.DelayedTextField(SearchFilter, _searchTextFieldStyle);
             if (GUILayout.Button(string.Empty, _clearSearchButtonStyle)) SearchFilter = string.Empty;
             EditorGUILayout.EndHorizontal();
+
+            if (!string.IsNullOrEmpty(SearchFilter))
+            {
+                var hiddenCount = _totalPropertyCount - _filteredProperties.Count;
+                if (hiddenCount > 0)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
+                    GUILayout.Label(
+                        $"{hiddenCount} field{(hiddenCount == 1 ? "" : "s")} hidden",
+                        _hiddenCountLabelStyle);
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
         }
 
         private void DrawFields()
@@ -82,11 +114,15 @@ namespace FieldsSearchEditor
         {
             if (_filteredProperties == null) _filteredProperties = new List<string>();
             _filteredProperties.Clear();
+            _totalPropertyCount = 0;
             var iterator = serializedObject.GetIterator();
             iterator.Next(true);
             while (iterator.NextVisible(false))
+            {
+                _totalPropertyCount++;
                 if (iterator.displayName.IndexOf(SearchFilter, StringComparison.OrdinalIgnoreCase) >= 0)
                     _filteredProperties.Add(iterator.name);
+            }
         }
     }
 }
