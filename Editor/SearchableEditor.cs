@@ -54,11 +54,12 @@ namespace FieldsSearchEditor
             if (_hiddenCountLabelStyle == null)
             {
                 _hiddenCountBackground = new Texture2D(1, 1);
-                _hiddenCountBackground.SetPixel(0, 0, new Color(0.25f, 0.6f, 0.9f, 0.85f));
+                _hiddenCountBackground.SetPixel(0, 0, new Color(0.4f, 0.4f, 0.4f, 0.5f));
                 _hiddenCountBackground.Apply();
                 _hiddenCountLabelStyle = new GUIStyle(GUI.skin.label)
                 {
-                    normal = { background = _hiddenCountBackground, textColor = Color.white },
+                    normal = { background = _hiddenCountBackground, textColor = new Color(0.85f, 0.85f, 0.85f) },
+                    hover = { background = _hiddenCountBackground, textColor = Color.white },
                     padding = new RectOffset(8, 8, 3, 3),
                     margin = new RectOffset(0, 0, 2, 2),
                     fontSize = 10,
@@ -91,9 +92,10 @@ namespace FieldsSearchEditor
                 {
                     EditorGUILayout.BeginHorizontal();
                     GUILayout.FlexibleSpace();
-                    GUILayout.Label(
+                    if (GUILayout.Button(
                         $"{hiddenCount} field{(hiddenCount == 1 ? "" : "s")} hidden",
-                        _hiddenCountLabelStyle);
+                        _hiddenCountLabelStyle))
+                        SearchFilter = string.Empty;
                     EditorGUILayout.EndHorizontal();
                 }
             }
