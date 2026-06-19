@@ -81,7 +81,7 @@ namespace FieldsSearchEditor
         private void DrawSearchEditor()
         {
             EditorGUILayout.BeginHorizontal();
-            SearchFilter = EditorGUILayout.DelayedTextField(SearchFilter, _searchTextFieldStyle);
+            SearchFilter = EditorGUILayout.TextField(SearchFilter, _searchTextFieldStyle);
             if (GUILayout.Button(string.Empty, _clearSearchButtonStyle)) SearchFilter = string.Empty;
             EditorGUILayout.EndHorizontal();
 
