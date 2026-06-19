@@ -27,7 +27,7 @@ namespace FieldsSearchEditor
             set
             {
                 if (_searchFilter == value) return;
-                EditorPrefs.SetString(SearchFilterPrefsKey, _searchFilter = value.ToUpper());
+                EditorPrefs.SetString(SearchFilterPrefsKey, _searchFilter = value);
                 RefreshFilteredProperties();
             }
         }
